@@ -11,8 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ApiTaskApplication implements CommandLineRunner {
 
-	@Autowired
-	private UserService  userService;
+	/*@Autowired
+	private UserService  userService;*/
 
 	public static void main(String[] args) {
 		SpringApplication.run(ApiTaskApplication.class, args);
@@ -20,10 +20,18 @@ public class ApiTaskApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception{
-		UserRequest userRequest = new UserRequest();
+		/*UserRequest userRequest = new UserRequest();
 		userRequest.setNick("elmo");
 		userRequest.setPassword("lala");
-		userService.saveUser(userRequest);
+		userService.saveUser(userRequest);*/
 	}
+
+	/*@Bean
+	public RestTemplate restTemplate() {
+		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+		factory.setConnectTimeout(3000);
+		factory.setReadTimeout(3000);
+		return new RestTemplate(factory);
+	}*/
 
 }

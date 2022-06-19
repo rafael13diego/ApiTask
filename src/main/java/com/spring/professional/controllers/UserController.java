@@ -25,63 +25,49 @@ public class UserController {
     @Autowired
     private UserService service;
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public Mono<ResponseEntity<Flux<User>>> lista(){
-        return Mono.just(
-                ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(service.findAll())
-        );
+    public Flux<User> getAllUsers(){
+        return service.findAll();
     }
+
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @GetMapping("{idUser}")
     public Mono<User> getUser(@Valid @PathVariable String idUser){
         return service.findUserById(idUser)
                 .switchIfEmpty(Mono.error(new NotFoundResourceException("ERR-450", "exist user: "+idUser)));
     }
+
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Mono<ResponseEntity<Mono<User>>> addUser(@Valid @RequestBody UserRequest userRequest){
+    public Mono<User> addUser(@Valid @RequestBody UserRequest userRequest){
         String name3 = userRequest.getNick();
         var name = userRequest.getNick();
         return service.existsUserByNick(name)
-                .handle((exists, asyncError) -> {
-                    if (exists){
-                        log.debug("Resultado bool?"+exists);
-                        asyncError.error(new NotFoundResourceException("ERR-450", "exist user: "+name));
-                    }else{
-                        asyncError.next(exists);
-                    }
-                }).map( resp -> new ResponseEntity(service.saveUser(userRequest), HttpStatus.CREATED));
+                .flatMap( exists -> service.saveUser(userRequest))
+                .switchIfEmpty(Mono.error(new ExistsResourceException(name)));
     }
 
     @ResponseStatus(HttpStatus.ALREADY_REPORTED)
     @PutMapping("/{idUser}")
-    public Mono<ResponseEntity<Mono<User>>> updateUser(@Valid @PathVariable String idUser,
+    public Mono<User> updateUser(@Valid @PathVariable String idUser,
                                                        @Valid @RequestBody UserRequest userRequest) {
         return service.findUserById(idUser)
-                .handle((exists, asyncOpe) -> {
-                    if (exists == null) {
-                        asyncOpe.error(new BusinessException("ERR-800", "Not found user"));
-                    } else {
-                        asyncOpe.next(new ResponseEntity<>(service.updateUser(exists, userRequest), HttpStatus.ACCEPTED));
-                    }
-                });
-
+                .flatMap(oldUser -> service.updateUser(oldUser,userRequest))
+                .switchIfEmpty(Mono.error(new BusinessException("ERR-800","Not Found  User")));
     }
 
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @PatchMapping("/{idUser}")
-    //public Mono<ResponseEntity<Mono<User>>> updatePassword(@Valid @PathVariable String idUser,
     public Mono<User> updatePassword(@Valid @PathVariable String idUser,
                                      @RequestBody UserRequest userRequest){
         return service.findUserById(idUser)
                 .flatMap( user -> {
                     return service.updatePassword(user,userRequest);
-                    //return new ResponseEntity<>(service.updatePassword(user,userRequest),HttpStatus.OK);
                 }).switchIfEmpty(Mono.error(new ExistsResourceException("Existe el recurso:"+idUser)));
-        /*return service.findUserById(idUser).map( user -> {
-            return new ResponseEntity(service.updatePassword(user, userRequest), HttpStatus.OK);
-        });*/
     }
 
+   @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete/{idUser}")
     public Mono<ResponseEntity<Mono<?>>> deleteUser(@Valid @PathVariable String idUser) {
         return service.existsUserById(idUser)
@@ -93,16 +79,12 @@ public class UserController {
                     }
                 });
     }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public Mono<ResponseEntity<Void>> eliminar(@PathVariable String id){
-        return service.findUserById(id).flatMap(p -> service.deleteUser(id)
-                .then(Mono.just(new ResponseEntity<>(HttpStatus.NO_CONTENT))))
-                .defaultIfEmpty(new ResponseEntity(service.findUserById(id),HttpStatus.NOT_FOUND));
-        /*
-        return service.findUserById(id).flatMap(p ->{
-            return service.deleteUser(id).then(Mono.just(new ResponseEntity<>(HttpStatus.NO_CONTENT)));
-        }).defaultIfEmpty(new ResponseEntity(service.findUserById(id),HttpStatus.NOT_FOUND));
-         */
+    public Mono<?> eliminar(@PathVariable String id){
+        return service.findUserById(id)
+                .map(p -> service.deleteUser(id))
+                .defaultIfEmpty(Mono.error(new NotFoundResourceException("ERR-800","Not found User")));
     }
 
 

@@ -20,14 +20,13 @@ import java.util.Map;
 @Slf4j
 public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
-
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler({
             ExistsResourceException.class
     })
     @ResponseBody
     public ErrorMessage existsResource(Exception exception) {
-        return new ErrorMessage(exception, HttpStatus.CONFLICT.value());
+        return new ErrorMessage(exception);
     }
 
     /*@ExceptionHandler(value = BusinessException.class)
@@ -39,7 +38,6 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = NotFoundResourceException.class)
     public ResponseEntity<ErrorNFRDTO> resourceDontExistHandlerException(NotFoundResourceException ex){
         ErrorNFRDTO error = ErrorNFRDTO.builder().code(ex.getCode()).message(ex.getMessage()).build();
-        log.info("ErrorHandler FoundResource");
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
@@ -75,7 +73,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     @ResponseBody
     public ErrorMessage exception(Exception exception) { // The error must be corrected
         exception.printStackTrace();
-        return new ErrorMessage(exception, HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return new ErrorMessage(exception);
     }
 }
 
