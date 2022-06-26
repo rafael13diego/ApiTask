@@ -9,6 +9,10 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends ReactiveMongoRepository<User, String> {
 
+    //QueryMethod <-
+    //JPQL
+    //QueryNative - JPA Specification  (Dynamic Query)
+    //Proyecciones
     Mono<Optional<User>> findFirstByNick(String nick);
     Mono<User> findUserByNick(String nick);
 
