@@ -1,4 +1,4 @@
-package com.spring.professional.configuration;
+/*package com.spring.professional.configuration;
 
 import com.spring.professional.services.UserService;
 import lombok.AllArgsConstructor;
@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().httpBasic()
                 .and().csrf().disable().authorizeRequests()
-                .antMatchers("/login","/users").permitAll()
+                .antMatchers("/login","api/user","localhost:8098/api/user").permitAll()
                 .anyRequest().authenticated().and()
                 .addFilterBefore(new ValidateAuth(), UsernamePasswordAuthenticationFilter.class);
         //antMatchers - Sin el token
@@ -46,3 +46,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 }
+*/

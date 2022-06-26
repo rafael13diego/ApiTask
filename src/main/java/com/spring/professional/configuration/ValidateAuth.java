@@ -1,4 +1,4 @@
-package com.spring.professional.configuration;
+/*package com.spring.professional.configuration;
 
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -15,4 +15,4 @@ public class ValidateAuth extends GenericFilterBean {
         String token = String.valueOf(request.getAttribute("Authorization")).substring(0,7);
         chain.doFilter(request,response);
     }
-}
+}*/

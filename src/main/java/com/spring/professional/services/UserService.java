@@ -1,14 +1,10 @@
 package com.spring.professional.services;
 
 import com.spring.professional.dto.UserRequest;
-import com.spring.professional.exceptions.BusinessException;
 import com.spring.professional.mapper.UserRequestToUser;
 import com.spring.professional.models.User;
 import com.spring.professional.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,7 +12,7 @@ import reactor.core.publisher.Mono;
 import java.util.Collections;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService /*implements UserDetailsService */{
 
     @Autowired
     private UserRepository userRepository;
@@ -68,7 +64,7 @@ public class UserService implements UserDetailsService {
 
 
      */
-    @Override
+   /* @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         //devolver userdetail : min  (user - password) -
 
@@ -88,5 +84,5 @@ public class UserService implements UserDetailsService {
         }
 
 
-    }
+    }*/
 }
